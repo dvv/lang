@@ -104,8 +104,34 @@ L.get('demo.hello')(params); // -> 'Привет, ixti! Тебе 10 сообще
 L.get('demo').hello(params); // -> 'Привет, ixti! Тебе 10 сообщений'
 L.hash.demo.hello(params);   // -> 'Привет, ixti! Тебе 10 сообщений'
 L.t('demo.hello', params);   // -> 'Привет, ixti! Тебе 10 сообщений'
+
+//
+// create another instance of Locale
+//
+var Locale = require('lang');
+var L = new Locale({
+  // specify custom tags
+  tags: {
+    open: '<%=',
+    close: '%>'
+  }
+});
+
+//
+// add some phrases
+//
+L.add('en-GB', {
+  demo: {
+    hello: 'Hello, #{user.name}! You have got #{messages} #{messages message|messages}'
+  }
+});
+
+//
+// look what phrases are
+//
+L.get('demo.hello'); // -> 'Hello, <%=user.name%>! You have got <%=messages%> <%=["message","messages"][(messages===1?0:1)]%>'
 ```
 
 ## License
 
-[MIT](dvv/lang/license.txt)
+[MIT](lang/license.txt)
