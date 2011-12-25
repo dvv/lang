@@ -1,0 +1,12 @@
+{
+    "name": "locale"
+  , "description": "Inflecting locales for node.js and browsers"
+  , "version": "0.0.1"
+  , "author": "Vladimir Dronnikov <dronnikov@gmail.com>"
+  , "devDependencies": {
+        "underscore": "*"
+      , "jade": "*"
+      , "vows": "*"
+      , "browserbuild": "*"
+    }
+}
