@@ -64,45 +64,47 @@ compile(L.get('demo').hello)(params); // -> 'Здоровенькі були, ix
 
 ## Advanced Usage
 
-    //
-    // create an instance of Locale
-    //
-    var Locale = require('lang');
-    var L = new Locale({
-      // specify phrases compiler
-      compiler: require('jade').compile
-    });
+```js
+//
+// create an instance of Locale
+//
+var Locale = require('lang');
+var L = new Locale({
+  // specify phrases compiler
+  compiler: require('jade').compile
+});
 
-    //
-    // add some phrases
-    //
-    L.add('en-GB', {
-      demo: {
-        hello: 'Hello, #{user.name}! You have got #{messages} #{messages message}'
-      }
-    });
-    L.add('ru-RU', {
-      demo: {
-        hello: 'Привет, #{user.name}! Тебе #{messages} #{messages сообщение|сообщения|сообщений}'
-      }
-    });
+//
+// add some phrases
+//
+L.add('en-GB', {
+  demo: {
+    hello: 'Hello, #{user.name}! You have got #{messages} #{messages message}'
+  }
+});
+L.add('ru-RU', {
+  demo: {
+    hello: 'Привет, #{user.name}! Тебе #{messages} #{messages сообщение|сообщения|сообщений}'
+  }
+});
 
-    //
-    // various ways to get type locale key.
-    // all values are functions
-    //
-    typeof L.get('demo.hello'); // -> 'function'
-    typeof L.get('demo').hello; // -> 'function'
-    typeof L.hash.demo.hello;   // -> 'function'
+//
+// various ways to get type locale key.
+// all values are functions
+//
+typeof L.get('demo.hello'); // -> 'function'
+typeof L.get('demo').hello; // -> 'function'
+typeof L.hash.demo.hello;   // -> 'function'
 
-    //
-    // use
-    //
-    var params = {user: {name: 'ixti'}, messages: 10};
-    L.get('demo.hello')(params); // -> 'Привет, ixti! Тебе 10 сообщений'
-    L.get('demo').hello(params); // -> 'Привет, ixti! Тебе 10 сообщений'
-    L.hash.demo.hello(params);   // -> 'Привет, ixti! Тебе 10 сообщений'
-    L.t('demo.hello', params);   // -> 'Привет, ixti! Тебе 10 сообщений'
+//
+// use
+//
+var params = {user: {name: 'ixti'}, messages: 10};
+L.get('demo.hello')(params); // -> 'Привет, ixti! Тебе 10 сообщений'
+L.get('demo').hello(params); // -> 'Привет, ixti! Тебе 10 сообщений'
+L.hash.demo.hello(params);   // -> 'Привет, ixti! Тебе 10 сообщений'
+L.t('demo.hello', params);   // -> 'Привет, ixti! Тебе 10 сообщений'
+```
 
 ## License
 
