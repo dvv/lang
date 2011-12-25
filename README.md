@@ -21,44 +21,46 @@ Example
 
 ## Level Ground Usage
 
-    //
-    // create an instance of Locale
-    //
-    var Locale = require('lang');
-    var L = new Locale();
+```js
+//
+// create an instance of Locale
+//
+var Locale = require('lang');
+var L = new Locale();
 
-    //
-    // add some phrases
-    //
-    L.add('en-GB', {
-      demo: {
-        hello: 'Hello, #{user.name}!'
-      }
-    });
-    L.add('ru-RU', {
-      demo: {
-        hello: 'Привет, #{user.name}!'
-      }
-    });
-    L.add('ua-UA', {
-      demo: {
-        hello: 'Здоровенькі були, #{user.name}!'
-      }
-    });
+//
+// add some phrases
+//
+L.add('en-GB', {
+  demo: {
+    hello: 'Hello, #{user.name}!'
+  }
+});
+L.add('ru-RU', {
+  demo: {
+    hello: 'Привет, #{user.name}!'
+  }
+});
+L.add('ua-UA', {
+  demo: {
+    hello: 'Здоровенькі були, #{user.name}!'
+  }
+});
 
-    //
-    // get locale key
-    //
-    L.get('demo.hello'); // -> 'Здоровенькі були, #{user.name}!'
+//
+// get locale key
+//
+L.get('demo.hello'); // -> 'Здоровенькі були, #{user.name}!'
 
-    //
-    // use in template
-    //
-    var compile = require('jade').compile;
-    var params = {user: {name: 'ixti'}};
+//
+// use in template
+//
+var compile = require('jade').compile;
+var params = {user: {name: 'ixti'}};
 
-    compile(L.get('demo.hello'))(params); // -> 'Здоровенькі були, ixti!'
-    compile(L.get('demo').hello)(params); // -> 'Здоровенькі були, ixti!'
+compile(L.get('demo.hello'))(params); // -> 'Здоровенькі були, ixti!'
+compile(L.get('demo').hello)(params); // -> 'Здоровенькі були, ixti!'
+```
 
 ## Advanced Usage
 
