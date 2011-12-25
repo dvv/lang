@@ -11,7 +11,8 @@ Unobtrusive inflection sugar is added to vanilla templating.
 -  `#{varname Singular|Plural2}` Plural form for >=5 is considered equal to as for >=2
 -  `#{varname Singular|Plural2|Plural5}` Plural forms explicitly specified
 
-## Example
+Example
+----
 
     Hi, #{user.name}!
     You've got #{messages.length message}.
