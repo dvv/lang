@@ -45,26 +45,10 @@ require('vows').describe('smoke')
     },
     'has sane defaults': function (L) {
       ok(L);
-      ok(L.hash);
-      ok(!L.options.tags);
-      ok(!L.compiler);
-    },
-  },
-  'locale with optinal tags:': {
-    topic: function () {
-      return new Locale({
-        tags: {
-          open: '#{',
-          close: '}'
-        }
-      });
-    },
-    'has tags': function (L) {
-      ok(L);
-      ok(L.hash);
-      equal(L.options.tags.open, '#{');
-      equal(L.options.tags.close, '}');
-      ok(!L.compiler);
+      ok(typeof L.p === 'function');
+      ok(typeof L.add === 'function');
+      ok(typeof L.get === 'function');
+      ok(typeof L.t === 'function');
     },
   },
   'locale accepts additions': {
@@ -77,115 +61,67 @@ require('vows').describe('smoke')
     },
     'overriding works': function(L) {
       ok(L);
-      ok(L.hash.foo);
-      equal(L.hash.user.name, 'name');
-      equal(L.hash.foo, locales.ru.foo);
+      ok(L.foo);
+      equal(L.user.name, 'name');
+      equal(L.foo, locales.ru.foo);
     },
     'getter works': function(L) {
       ok(L);
-      equal(L.get('user.name'), L.hash.user.name);
-      equal(L.get('user').name, L.hash.user.name);
+      equal(L.get('user.name'), L.user.name);
+      equal(L.get('user').name, L.user.name);
     },
     'compiler works': function(L) {
       ok(L);
-      equal(L.get('user').family3, 'У тебя #{wives} #{["жена","жены","жён"][(wives%10===1&&wives%100!==11?0:wives%10>=2&&wives%10<=4&&(wives%100<10||wives%100>=20)?1:2)]} и #{children} #{["ребёнок","ребёнка","детей"][(children%10===1&&children%100!==11?0:children%10>=2&&children%10<=4&&(children%100<10||children%100>=20)?1:2)]}');
+      equal(typeof L.get('user').family3, 'function');
+      equal(L.get('user').family3.body, 'var __p=this.p(\'ru\');with(locals||{}){return [\'У тебя \',wives,\' \',__p(wives,["жена","жены","жён"]),\' и \',children,\' \',__p(children,["ребёнок","ребёнка","детей"]),\'\'].join(\'\')}');
     },
-    'output is vanilla jade': function(L) {
-      var compile = require('jade').compile;
+    'output is vanilla string': function(L) {
       var vars = {wives: 1, children: 0};
-      equal(compile(L.get('user.family1'))(vars), "<You>'ve got 1 wife and 0 childre n'</You>");
-      equal(compile(L.get('user.family2'))(vars), "<Tu>as 1 femme et 0 enfant</Tu>");
-      equal(compile(L.get('user.family3'))(vars), "У тебя 1 жена и 0 детей\n");
+      equal(L.get('user.family1')(vars), "You've got 1 wife and 0 childre n'");
+      equal(L.get('user.family2')(vars), "Tu as 1 femme et 0 enfant");
+      equal(L.get('user.family3')(vars), "У тебя 1 жена и 0 детей");
     },
-  },
-  'locale honors non-standard tags': {
-    topic: function () {
-      var L = new Locale({
-        tags: {
-          open: '<%=',
-          close: '%>'
-        }
-      });
-      L.add('en', locales.en);
-      L.add('fr', locales.fr);
-      L.add('ru', locales.ru);
-      return L;
-    },
-    'overriding works': function(L) {
-      ok(L);
-      ok(L.hash.foo);
-      equal(L.hash.user.name, 'name');
-      equal(L.hash.foo, locales.ru.foo);
-    },
-    'getter works': function(L) {
-      ok(L);
-      equal(L.get('user.name'), L.hash.user.name);
-      equal(L.get('user').name, L.hash.user.name);
-    },
-    'compiler works': function(L) {
-      ok(L);
-      equal(L.get('user').family3, 'У тебя <%=wives%> <%=["жена","жены","жён"][(wives%10===1&&wives%100!==11?0:wives%10>=2&&wives%10<=4&&(wives%100<10||wives%100>=20)?1:2)]%> и <%=children%> <%=["ребёнок","ребёнка","детей"][(children%10===1&&children%100!==11?0:children%10>=2&&children%10<=4&&(children%100<10||children%100>=20)?1:2)]%>');
-    },
-    'output is vanilla micro-templating': function(L) {
-      var compile = require('underscore').template;
-      var vars = {wives: 2, children: 4};
-      equal(compile(L.get('user.family1'))(vars), "You've got 2 wives and 4 childre n'");
-      equal(compile(L.get('user.family2'))(vars), "Tu as 2 femmes et 4 enfants");
-      equal(compile(L.get('user.family3'))(vars), "У тебя 2 жены и 4 ребёнка");
-    },
-  },
-  'locale is compileable': {
-    topic: function () {
-      var L = new Locale({
-        tags: {
-          open: '<%=',
-          close: '%>'
-        },
-        compiler: require('underscore').template
-      });
-      L.add('en', locales.en);
-      L.add('fr', locales.fr);
-      L.add('ru', locales.ru);
-      return L;
-    },
-    'into template-neutral functions': function(L) {
-      ok(L.options.compiler);
-      equal(typeof L.get('user.family2'), 'function');
-      equal(L.get('user.family2').length, 1);
-    },
-    'which return strings': function(L) {
-      equal(L.get('user.family3')({wives: 5, children: 1001}), "У тебя 5 жён и 1001 ребёнок");
+    'compiled functions are bound to the locale': function(L) {
+      var vars = {wives: 2, children: 5};
+      equal(L.get('user.family1').call(null, vars), "You've got 2 wives and 5 childre n'");
     },
   },
   'locale provides helper for templates': {
     topic: function () {
       var L = new Locale();
-      L.add('en', locales.en, require('jade').compile);
-      L.add('fr', locales.fr, require('jade').compile);
-      L.add('ru', locales.ru, require('jade').compile);
+      L.add('en', locales.en);
+      L.add('fr', locales.fr);
+      L.add('ru', locales.ru);
       return L;
     },
-    'into template-neutral functions': function(L) {
-      equal(typeof L.get('foo'), 'function');
-      equal(L.get('foo').length, 1);
+    'into strings': function(L) {
+      equal(typeof L.get('foo'), 'string');
+    },
+    'or into template-neutral bound functions': function(L) {
+      equal(typeof L.get('user.family1'), 'function');
+      equal(L.get('user.family1').length, 1);
     },
     'which return strings': function(L) {
-      equal(L.t('user.family3', {wives: 1, children: 11}), "У тебя 1 жена и 11 детей\n");
+      equal(L.t('user.family3', {wives: 1, children: 11}), "У тебя 1 жена и 11 детей");
     },
   },
-  'locale honors': {
+  'locale provides sugar': {
     topic: function () {
-      var L = new Locale({
-      });
+      var L = new Locale();
       L.add('en', {
-        bar:'У тебя #{wives} #{wives   жена|жены|жён} и #{children} %{ребёнок}}|ребёнка}}}}|детей}}}}}}}:children',
-        foo: '#{a a}}|b}}|cc}}}}}'
+        foo: 'simple foo',
+        bar: 'complex string: reuses [this.foo] #{this.foo}',
+        baz: 'more complex string: reuses [this.foo] #{this.foo} and [this.bar] #{this.bar}',
       });
       return L;
     },
-    'escaping': function(L) {
-      ok(L);
-      equal(L.hash.foo, '#{["a}","b}","cc}}"][(a===1?0:1)]}');
+    'for reusable interpolation': function(L) {
+      equal(typeof L.get('foo'), 'string');
+      equal(typeof L.get('bar'), 'function');
+      equal(typeof L.get('baz'), 'function');
+      equal(L.t('foo'), 'simple foo');
+      equal(L.t('bar'), 'complex string: reuses [this.foo] simple foo');
+      equal(L.t('baz'), 'more complex string: reuses [this.foo] simple foo and [this.bar] complex string: reuses [this.foo] simple foo');
     },
   },
 }).export(module);
