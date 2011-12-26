@@ -70,4 +70,13 @@ test('compiler', function () {
   equal(L.t('user.family3', {wives: 5, children: 1001}), "У тебя 5 жён и 1001 ребёнок");
 });
 
+test('escaping', function () {
+  var L = new Locale({});
+  L.add('en', {
+    foo: '%{a}}|b}}|cc}}}}}:a'
+  });
+  ok(L);
+  equal(L.hash.foo, '#{["a}","b}","cc}}"][(a===1?0:1)]}');
+});
+
 });

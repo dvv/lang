@@ -83,7 +83,7 @@ L.add('en-GB', {
 });
 L.add('ru-RU', {
   demo: {
-    hello: 'Привет, #{user.name}! Тебе #{messages} #{messages сообщение|сообщения|сообщений}'
+    hello: 'Привет, #{user.name}! Тебе #{messages} %{сообщение|сообщения|сообщений}:messages'
   }
 });
 
