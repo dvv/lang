@@ -51,6 +51,27 @@ require('vows').describe('smoke')
       ok(!L.compiler);
     },
   },
+  'locale adds no significant overhead': {
+    topic: function () {
+      var localeIds = [
+        'en', 'ja', 'vi', 'ko', 'pt-BR', 'fr', 'lv', 'br', 'ga', 'gd', 'cy',
+        'ro', 'lt', 'ru', 'uk', 'sr', 'hr', 'sh', 'cs', 'sk', 'pl', 'mk', 'sl'
+      ];
+      var plurals = require('../lib/plurals');
+      var lengths = {};
+      for (var i = 0; i < localeIds.length; i++) {
+        var L = new Locale();
+        L.add(localeIds[i], locales.en);
+        var s = L.get('user.family1');
+        lengths[localeIds[i]] = Math.round(s.length / locales.en.user.family1.length * 100) / 100;
+      }
+      return lengths;
+    },
+    'escaping': function(lengths) {
+      ok(lengths);
+      console.log(lengths);
+    },
+  },
   'locale accepts additions': {
     topic: function () {
       var L = new Locale();
