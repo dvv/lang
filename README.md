@@ -7,9 +7,8 @@ Unobtrusive inflection sugar is added to vanilla templating.
 ## Phrases Syntax
 
 -  `#{varname}` Echoes value of variable
--  `#{varname Singular}` Plural forms will be guessed for languages with simple inflection rules
--  `#{varname Singular|Plural2}` Plural form for >=5 is considered equal to as for >=2
--  `#{varname Singular|Plural2|Plural5}` Plural forms explicitly specified
+-  `#{varname Singular|Plurals...}` Plural forms explicitly specified
+-  `%{Singular|Plurals...}:varname` Alternate syntax. Plural forms explicitly specified
 
 Example
 ----
@@ -17,7 +16,7 @@ Example
     Hi, #{user.name}!
     You've got #{messages.length message}.
     How are your all #{children.length child|children} doing?
-    А у меня в кармане #{nails_count} #{nails_count гвоздь|гвоздя|гвоздей}
+    А у меня в кармане #{nails_count} %{гвоздь|гвоздя|гвоздей}:nails_count
 
 ## Level Ground Usage
 

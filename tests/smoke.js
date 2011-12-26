@@ -13,14 +13,14 @@ var locales = {
     bar: 'bar',
     user: {
       name: 'name',
-      family1: 'You\'ve got #{wives} #{wives wife|wives} and #{children} #{child|childre n\'|kindern children}',
+      family1: 'You\'ve got #{wives} #{wives wife|wives} and #{children} %{child|childre n\'|kindern}:children',
     },
   },
 
   fr: {
     foo: 'fou',
     user: {
-      family2: 'Tu as #{wives} #{wives femme|femmes} et #{children} #{enfant|enfants children}',
+      family2: 'Tu as #{wives} #{wives femme|femmes} et #{children} %{enfant|enfants}:children',
     },
   },
 
@@ -28,7 +28,7 @@ var locales = {
     foo: 'фуй',
     bar: 'буй',
     user: {
-      family3: 'У тебя #{wives} #{wives жена|жены|жён} и #{children} #{ребёнок|ребёнка|детей children}',
+      family3: 'У тебя #{wives} #{wives жена|жены|жён} и #{children} %{ребёнок|ребёнка|детей}:children',
     },
   },
 
@@ -155,6 +155,20 @@ require('vows').describe('smoke')
     },
     'which return strings': function(L) {
       equal(L.t('user.family3', {wives: 1, children: 11}), "У тебя 1 жена и 11 детей\n");
+    },
+  },
+  'locale honors': {
+    topic: function () {
+      var L = new Locale({
+      });
+      L.add('en', {
+        foo: '#{a a}}|b}}|cc}}}}}'
+      });
+      return L;
+    },
+    'escaping': function(L) {
+      ok(L);
+      equal(L.hash.foo, '#{["a}","b}","cc}}"][(a===1?0:1)]}');
     },
   },
 }).export(module);

@@ -5,14 +5,14 @@ var locales = {
     bar: 'bar',
     user: {
       name: 'name',
-      family1: 'You\'ve got #{wives} #{wives wife|wives} and #{children} #{child|childre n\'|kindern children}',
+      family1: 'You\'ve got #{wives} #{wives wife|wives} and #{children} %{child|childre n\'|kindern}:children',
     },
   },
 
   fr: {
     foo: 'fou',
     user: {
-      family2: 'Tu as #{wives} #{wives femme|femmes} et #{children} #{enfant|enfants children}',
+      family2: 'Tu as #{wives} #{wives femme|femmes} et #{children} %{enfant|enfants}:children',
     },
   },
 
@@ -20,7 +20,7 @@ var locales = {
     foo: 'фуй',
     bar: 'буй',
     user: {
-      family3: 'У тебя #{wives} #{wives жена|жены|жён} и #{children} #{ребёнок|ребёнка|детей children}',
+      family3: 'У тебя #{wives} #{wives жена|жены|жён} и #{children} %{ребёнок|ребёнка|детей}:children',
     },
   },
 
