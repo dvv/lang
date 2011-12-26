@@ -14,8 +14,7 @@ Example
 ----
 
     Hi, #{user.name}!
-    You've got #{messages.length message}.
-    How are your all #{children.length child|children} doing?
+    You've got #{messages.length message|messages}.
     А у меня в кармане #{nails_count} %{гвоздь|гвоздя|гвоздей}:nails_count
 
 ## Level Ground Usage
@@ -50,15 +49,6 @@ L.add('ua-UA', {
 // get locale key
 //
 L.get('demo.hello'); // -> 'Здоровенькі були, #{user.name}!'
-
-//
-// use in template
-//
-var compile = require('jade').compile;
-var params = {user: {name: 'ixti'}};
-
-compile(L.get('demo.hello'))(params); // -> 'Здоровенькі були, ixti!'
-compile(L.get('demo').hello)(params); // -> 'Здоровенькі були, ixti!'
 ```
 
 ## Advanced Usage
@@ -68,16 +58,14 @@ compile(L.get('demo').hello)(params); // -> 'Здоровенькі були, ix
 // create an instance of Locale
 //
 var Locale = require('lang');
-var L = new Locale({
-  // specify phrases compiler
-  compiler: require('jade').compile
-});
+var L = new Locale();
 
 //
 // add some phrases
 //
 L.add('en-GB', {
   demo: {
+    simple: 'Simple text',
     hello: 'Hello, #{user.name}! You have got #{messages} #{messages message}'
   }
 });
@@ -89,32 +77,32 @@ L.add('ru-RU', {
 
 //
 // various ways to get type locale key.
-// all values are functions
+// values are functions if interpolation was seen
 //
 typeof L.get('demo.hello'); // -> 'function'
 typeof L.get('demo').hello; // -> 'function'
-typeof L.hash.demo.hello;   // -> 'function'
+typeof L.demo.hello;        // -> 'function'
+//
+// or plain strings otherwise
+//
+typeof L.demo.simple;       // -> 'string'
 
 //
 // use
 //
 var params = {user: {name: 'ixti'}, messages: 10};
-L.get('demo.hello')(params); // -> 'Привет, ixti! Тебе 10 сообщений'
-L.get('demo').hello(params); // -> 'Привет, ixti! Тебе 10 сообщений'
-L.hash.demo.hello(params);   // -> 'Привет, ixti! Тебе 10 сообщений'
-L.t('demo.hello', params);   // -> 'Привет, ixti! Тебе 10 сообщений'
+L.get('demo.hello')(params);     // -> 'Привет, ixti! Тебе 10 сообщений'
+L.get('demo').hello(params);     // -> 'Привет, ixti! Тебе 10 сообщений'
+L.demo.hello(params);            // -> 'Привет, ixti! Тебе 10 сообщений'
+L.demo.hello.call(null, params); // -> 'Привет, ixti! Тебе 10 сообщений'
+L.t('demo.hello', params);       // -> 'Привет, ixti! Тебе 10 сообщений'
+L.t('simple', params);           // -> 'Simple text'
 
 //
 // create another instance of Locale
 //
 var Locale = require('lang');
-var L = new Locale({
-  // specify custom tags
-  tags: {
-    open: '<%=',
-    close: '%>'
-  }
-});
+var L = new Locale();
 
 //
 // add some phrases
@@ -128,7 +116,7 @@ L.add('en-GB', {
 //
 // look what phrases are
 //
-L.get('demo.hello'); // -> 'Hello, <%=user.name%>! You have got <%=messages%> <%=["message","messages"][(messages===1?0:1)]%>'
+L.get('demo.hello'); // -> 'var __p=this.p("en");with(locals||{}){return ["Hello, ",user.name,"! You have got ",messages," ",__p(messages,["message","messages"]),""].join("")}'
 ```
 
 ## License
