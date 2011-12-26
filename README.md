@@ -116,7 +116,7 @@ L.add('en-GB', {
 //
 // look what phrases are
 //
-L.get('demo.hello'); // -> 'var __p=this.p("en");with(locals||{}){return ["Hello, ",user.name,"! You have got ",messages," ",__p(messages,["message","messages"]),""].join("")}'
+L.get('demo.hello').body; // -> 'var __p=this.p("en");with(locals||{}){return ["Hello, ",user.name,"! You have got ",messages," ",__p(messages,["message","messages"]),""].join("")}'
 ```
 
 ## License
