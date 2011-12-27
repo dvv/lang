@@ -86,6 +86,36 @@ require('vows').describe('smoke')
       equal(L.get('user.family1').call(null, vars), "You've got 2 wives and 5 childre n'");
     },
   },
+  'parsing quirky strings': {
+    topic: function () {
+      var L = new Locale();
+      return L.add('', {
+        e00: '  #{   ',
+        e01: '  }\t\n #{',
+        e02: '  }}\t\n #{',
+        e03: '  }}}\t\n #{',
+        e1: '#{}',
+        e2: '#{1}',
+        e3: '#{  }',
+        e4: '#{. (.) . (.).}',
+        // FIXME: look closer
+        e5: '#{. (.) #{} . (.).}',
+      });
+    },
+    'results in ignoring quirks': function (L) {
+      //console.log(L);
+      equal(L.e00, '  #{   ');
+      equal(L.e01, '  }\t\n #{');
+      equal(L.e02, '  }}\t\n #{');
+      equal(L.e03, '  }}}\t\n #{');
+      equal(L.e1.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'\',\'\'].join(\'\')}');
+      equal(L.e2.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'1\',\'\'].join(\'\')}');
+      equal(L.e3.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'  \',\'\'].join(\'\')}');
+      equal(L.e4.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) . (.).\',\'\'].join(\'\')}');
+      // FIXME: look closer
+      equal(L.e5.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) #{\',\' . (.).}\'].join(\'\')}');
+    }
+  },
   'locale provides helper for templates': {
     topic: function () {
       var L = new Locale();
@@ -112,6 +142,7 @@ require('vows').describe('smoke')
         foo: 'simple foo',
         bar: 'complex string: reuses [this.foo] #{this.foo}',
         baz: 'more complex string: reuses [this.foo] #{this.foo} and [this.bar] #{this.bar}',
+        hello: 'Hello, #{user.name}! You have got #{messages} #{messages message|messages}'
       });
       return L;
     },
@@ -122,6 +153,7 @@ require('vows').describe('smoke')
       equal(L.t('foo'), 'simple foo');
       equal(L.t('bar'), 'complex string: reuses [this.foo] simple foo');
       equal(L.t('baz'), 'more complex string: reuses [this.foo] simple foo and [this.bar] complex string: reuses [this.foo] simple foo');
+      equal(L.get('hello').body, 'var __p=this.p(\'en\');with(locals||{}){return [\'Hello, \',user.name,\'! You have got \',messages,\' \',__p(messages,["message","messages"]),\'\'].join(\'\')}');
     },
   },
 }).export(module);
