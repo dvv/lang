@@ -48,7 +48,8 @@ L.add('ua-UA', {
 //
 // get locale key
 //
-L.get('demo.hello'); // -> 'Здоровенькі були, #{user.name}!'
+L.get('demo.hello'); // -> [Function]
+L.get('demo.hello')({user: {name: 'dvv'}}); // -> 'Здоровенькі були, dvv!'
 ```
 
 ## Advanced Usage
@@ -76,7 +77,7 @@ L.add('ru-RU', {
 });
 
 //
-// various ways to get type locale key.
+// various ways to get locale key.
 // values are functions if interpolation was seen
 //
 typeof L.get('demo.hello'); // -> 'function'
@@ -112,6 +113,18 @@ L.add('en-GB', {
     hello: 'Hello, #{user.name}! You have got #{messages} #{messages message|messages}'
   }
 });
+
+//
+// add phrases which use phrases
+//
+L.add('en-GB', {
+  demo: {
+    h_once: 'once',
+    h_twice: '#{this.demo.h_once} and #{this.demo.h_once} is twice'
+  }
+});
+
+L.t('demo.h_twice', {});  // -> 'once and once is twice'
 
 //
 // look what phrases are
