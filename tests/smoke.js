@@ -36,6 +36,7 @@ var locales = {
 
 var ok  = require('assert').ok;
 var equal  = require('assert').equal;
+var throws  = require('assert').throws;
 
 require('vows').describe('smoke')
 .addBatch({
@@ -90,30 +91,50 @@ require('vows').describe('smoke')
     topic: function () {
       var L = new Locale();
       return L.add('', {
+        // simple strings
         e00: '  #{   ',
         e01: '  }\t\n #{',
         e02: '  }}\t\n #{',
         e03: '  }}}\t\n #{',
-        e1: '#{}',
-        e2: '#{1}',
-        e3: '#{  }',
-        e4: '#{. (.) . (.).}',
+        // variables
+        e10: '#{}',
+        e11: '#{1}',
+        e12: '#{  }',
+        e13: '#{. (.) . (.).}',
         // FIXME: look closer
-        e5: '#{. (.) #{} . (.).}',
+        e14: '#{. (.) #{} . (.).}',
+        // inflection
+        e20: '%{a|b|c}:foo_bar$baz.fu.1.bar.baz',
+        e21: '%{a|b|c}:___.0.1.2',
+        e22: '%{a|b|c}:...',
+        e23: '#{foo_bar$baz.fu.1.bar.baz  \na|b|c}',
+        e24: '#{___.0.1.2    a|b|c}',
+        // FIXME: look closer
+        e25: '#{... a|b|c}',
       });
     },
     'results in ignoring quirks': function (L) {
       //console.log(L);
+      //
       equal(L.e00, '  #{   ');
       equal(L.e01, '  }\t\n #{');
       equal(L.e02, '  }}\t\n #{');
       equal(L.e03, '  }}}\t\n #{');
-      equal(L.e1.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'\',\'\'].join(\'\')}');
-      equal(L.e2.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'1\',\'\'].join(\'\')}');
-      equal(L.e3.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'  \',\'\'].join(\'\')}');
-      equal(L.e4.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) . (.).\',\'\'].join(\'\')}');
+      //
+      equal(L.e10.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'\',\'\'].join(\'\')}');
+      equal(L.e11.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'1\',\'\'].join(\'\')}');
+      equal(L.e12.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'  \',\'\'].join(\'\')}');
+      equal(L.e13.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) . (.).\',\'\'].join(\'\')}');
       // FIXME: look closer
-      equal(L.e5.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) #{\',\' . (.).}\'].join(\'\')}');
+      equal(L.e14.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'. (.) #{\',\' . (.).}\'].join(\'\')}');
+      //
+      equal(L.e20, '%{a|b|c}:foo_bar$baz.fu.1.bar.baz');
+      equal(L.e21, '%{a|b|c}:___.0.1.2');
+      equal(L.e22, '%{a|b|c}:...');
+      equal(L.e23, '#{foo_bar$baz.fu.1.bar.baz  \na|b|c}');
+      equal(L.e24, '#{___.0.1.2    a|b|c}');
+      // FIXME: look closer
+      equal(L.e25.body, 'var __p=this.p(\'\');with(locals||{}){return [\'\',\'... a|b|c\',\'\'].join(\'\')}');
     }
   },
   'locale provides helper for templates': {
